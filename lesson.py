@@ -1,59 +1,37 @@
-x = 1;
-y = 2;
+import logging.config
 
-x = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-
-def test_func(x, y, z, message):
-              """
-
-              iparam x;
-              iparam y;
-              iparam z;
-              iparam message;
-              
-              Note;
-
-              """
-              
-              print(message)
-if (x):
-    print('true')
-
-    x = {
-      'test': 'aaaa'
+# logging.config.fileConfig('logging.ini')
+logging.config.dictConfig({
+  'version': 1,  # 'veretion' → 'version' に修正
+  'formatters': {
+    'sampleFormatter': {
+      'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
     }
+  },
+  'handlers': {
+    'sampleHandlers': {  # 'sampleeHandlers' → 'sampleHandlers' に修正
+      'class': 'logging.StreamHandler',
+      'formatter': 'sampleFormatter',
+      'level': logging.DEBUG
+    }
+  },
+  'root': {
+    'handlers': ['sampleHandlers'],
+    'level': logging.WARNING,
+  },
+  'loggers': {
+    'simpleExample': {
+      'handlers': ['sampleHandlers'],
+      'level': logging.DEBUG,
+      'propagate': 0
+    }
+  }
+})
 
-    # x + y
+logger = logging.getLogger('simpleExample')
 
-    x = 100
-    yyyyyyyy = 200
-    zzzzzzzzzzzzzzz = 300
-
-word = 'hello'
-word2 = "!"
-
-new_word = '{} $$$$$$ {} !!!!!!!!'.format(word, word2)
-new_word = word +  "$$$$$$$$" +  word2 + '!!!!!!!!'
-
-long_word = ""
-for word in {'a', 'b', 'c'}:
-    long_word += "{}dsdwawwww".format(word)
-
-long_word = []
-for word in {'a', 'b', 'c'}:
-    long_word.append("{}dsdwawwww".format(word))
-new_long_word = "".join(long_word)
-
-print('new_long_word')
-print('new_long_word')
-print("new'long_word")
-
-'new_long_word {} new_long_word'.format(new_long_word)
-
-if x:
-  print('true')
-else:
-  print('false')
-
-if x: print('true')
-else: print('false')
+logger.debug('debug message')
+logger.info('info message')
+logger.warning('warn message')
+logger.error('error message')
+logger.critical('critical message')

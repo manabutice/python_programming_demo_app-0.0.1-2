@@ -1,3 +1,23 @@
+def base(x):
+  def plus(y):
+    return x + y
+  return plus
+
+plus = base(10)
+print(plus(10))
+print(plus(30))
+
+def add_num():
+  def plus(y):
+    return i + y
+  return plus
+
+i = 10
+plus = add_num()
+print(plus(10))
+i = 100
+print(plus(30))
+
 
 # # """
 
@@ -41,13 +61,19 @@
 # for i in t():
 #   print(i)
 
-def other_func(f):
-  print(f(10))
+# def other_func(f):
+#   print(f(10))
 
-def test_func(x):
-  return x * 2
+# def test_func(x):
+#   return x * 2
+# def test_func2(x):
+#   return x * 5
+# other_func(test_func)
+# other_func(test_func2)
 
-lambda x: x * 2
+# other_func(lambda x: x * 2)
+# other_func(lambda x: x * 5)
 
-other_func(test_func)
-other_func(lambda x: x * 2)
+# y = 'test_func'
+# x = i if y else 2
+# print(x)
