@@ -1,35 +1,31 @@
-print ('test')
-# import logging
+from optparse import OptionParser
+from optparse import OptionGroup
 
-# import logging.handlers
 
-# import config
+def main():
+    usage = 'usage: %prog [options] arg1 arg2'
+    parser = OptionParser(usage=usage)
+    parser.add_option('-f', '--file', action='store', type='string', dest='filename', help='File name')
+    parser.add_option('-n', '--num', action='store', type='int', dest='num')
+    parser.set_defaults(verbose=True)
+    parser.add_option('-v', action='store_true', dest='verbose')
+    parser.add_option('-q', action='store_false', dest='verbose')
+    parser.add_option('-r', action='store_const', const='root', dest='user_name')
+    parser.add_option('-e', dest='env')
 
-# smtp_host = 'smtp.live.com'
-# smtp_port = 587
+    def is_release(option, opt_str, value, parser):
+        if parser.values.env == 'prd':
+            raise parser.error("Can't release")
+        setattr(parser.values, option.dest, True)
+    parser.add_option('--release', action="callback", callback=is_release, dest='release')
 
-# from_email = 'xxxx@hotmail.com'
-# from_email = config.from_email
+    group = OptionGroup(parser, 'Dangerous options')
+    group.add_option('-g', action='store_true', help='Group option')
+    parser.add_option_group(group)
 
-# to_email = 'xxxx@hotmail.com'
-# to_email = config.to_email
+    options, args = parser.parse_args()
+    print(options)
+    print(args)
 
-# username = 'xxxx@hotmail.com'
-# username = config.username
-
-# password = 'feiwoafjdafjeiwaf'
-# password = config.password
-
-# logger = logging.getLogger('email')
-# logger.setLevel(logging.CRITICAL)
-
-# logger.addHandler(logging.handlers.SMTPHandler(
-#         (smtp_host, smtp_port), from_email, to_email,
-#         subject='Admin test log',
-#         credentials=(username, password),
-#         secure=(None, None, None),
-#         timeout=20
-# ))
-
-# logger.info('test')
-# logger.critical('critical')
+if __name__ == '__main__':
+    main()
