@@ -1,34 +1,51 @@
-import os, sqlite3
+from sqlalchemy import Column, Integer, String, create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
 
-# db_path = os.path.abspath("test_sqlite.db")  # 絶対パスに固定
-conn = sqlite3.connect(':memory:')
-# print("DB path:", db_path)
+# ---- DB接続（SQLiteのメモリ）----
+engine = create_engine("mysql+pymysql:///test_mysql_database2", echo=True, future=True)
 
-curs = conn.cursor()
+# MySQLでやりたい場合（↑の1行と差し替え）
+# engine = create_engine(
+#     "mysql+pymysql://root:pass@127.0.0.1:3306/test_mysql_database?charset=utf8mb4",
+#     echo=True, future=True
+# )
 
-# テーブルが無ければ作る（初回のみ）
-curs.execute("""
-CREATE TABLE IF NOT EXISTS persons(
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT
-)
-""")
-conn.commit()
+Base = declarative_base()
 
-# ここでは INSERT しない
-curs.execute("DELETE FROM persons")
-curs.execute('INSERT INTO persons(name) values("Nancy")')
-curs.execute('INSERT INTO persons(name) values("Jun")')
-conn.commit()
+# ---- モデル定義 ----
+class Person(Base):
+    __tablename__ = "person"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(14), nullable=False)
 
-curs.execute('UPDATE persons set name = "Michel" WHERE "Mike"')
+    def __repr__(self):
+        return f"Person(id={self.id!r}, name={self.name!r})"
 
-curs.execute('DELETE FROM persons WHERE name = "Michel"')
-conn.commit()
-# 中身を表示
-curs.execute("SELECT * FROM persons")
-# for row in curs.fetchall():
-print(curs.fetchall())
+# ---- テーブル作成 ----
+Base.metadata.create_all(engine)
 
-curs.close()
-conn.close()
+# ---- セッション作成 ----
+Session = sessionmaker(bind=engine)
+
+session = Session()
+
+p1 = Person(name='Mike')    # 1件追加
+session.add(p1)
+p2 = Person(name='Nancy')    # 1件追加
+session.add(p2)
+p3 = Person(name='Jun')    # 1件追加
+session.add(p3)
+session.commit()
+
+p4 = session.query(Person).filter_by(name='Mike').first()
+p4.name = 'Michel'
+session.add(p4)
+session.commit()
+
+p5 = session.query(Person).filter_by(name='Nancy').first()
+session.delete(p5)
+session.commit()
+
+people = session.query(Person).all()
+for person in people:
+    print(person.id, person.name)
