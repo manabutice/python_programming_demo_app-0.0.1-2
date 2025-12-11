@@ -1,4 +1,4 @@
-# Python_StyleChecker
+# Python学習用
 
 database コマンド
 
